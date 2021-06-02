@@ -21,9 +21,8 @@ client.on('message', (message) => {
     }
 });
 
-client.on('guildMemberAdd', async (member) => {
-    console.log('yea')
-    await welcome.execute(member);
+client.on('guildMemberAdd', (member) => {
+    welcome.execute(member);
 })
 
 function loadCommandFiles() {

@@ -1,70 +1,41 @@
 const resources = require('./resources');
 const getPreformedEmbed = require('./getPreformedEmbed');
+const config = require('../config/data.json');
 module.exports = {
     name: 'welcome',
     description: 'restricts new members to a welcome channel pending click-through',
     execute: async (member) => {
+        if(!config.welcome_channel_id) {
+            console.log("No welcome channel set");
+            return;
+        }
 
         toggleMemberViewPermissions(true);
-        const welcomeChannel = await createChannel();
+        const welcomeChannel = await member.guild.channels.resolve(config.welcome_channel_id);
 
-        const welcomeEmbed = getPreformedEmbed.execute(member.client);
-        welcomeEmbed.setAuthor(`Welcome to ${member.guild.name}`);
-        welcomeEmbed.setThumbnail(member.guild.iconURL());
-        welcomeEmbed.addFields(
-            { name: 'This message serves as a placeholder', value: 'Feel free to interact with the bot', inline: false},
-            { name: 'test', value: 'test', inline: true},
-            { name: 'test', value: 'test', inline: true},
-            { name: 'test', value: 'test', inline: true},
-            { name: 'test', value: 'test', inline: true},
-            { name: 'test', value: 'test', inline: true},
-            { name: 'test', value: 'test', inline: true},
-            { name: `To continue please press ${decodeURIComponent(resources.emojis.green_checkmark)} below`, value: '\u200B'}
-        );
-
-        welcomeChannel.send(welcomeEmbed)
+        welcomeChannel.messages.fetch(config.welcome_channel_message_id)
             .then(message => {
-
-                member.client.on('guildMemberRemove', mem => {
-                    if (member.id === mem.id) {
-                        welcomeChannel.delete();
-                    }
-                });
-
-                message.react(decodeURIComponent(resources.emojis.green_checkmark));
-                const collector = message.createReactionCollector((reaction, user) => user.id === member.user.id);
-                collector.on('collect', (reaction) => {
-                    if(reaction.emoji.identifier === resources.emojis.green_checkmark){
-                        toggleMemberViewPermissions(false);
-                        welcomeChannel.delete();
-                    }
-                });
+            let collector = message.createReactionCollector((reaction, user) => user.id === member.user.id);
+            collector.on('collect', (reaction) => {
+                if(reaction.emoji.identifier === resources.emojis.green_checkmark){
+                    toggleMemberViewPermissions(false);
+                }
             });
-
+        })
 
         function toggleMemberViewPermissions(isBlock) {
-            member.guild.channels.cache.array().forEach(channel => {
+
+            member.guild.channels.cache.filter(channel => channel.id != config.welcome_channel_id).forEach(channel => {
                 channel.updateOverwrite(member, {
                     VIEW_CHANNEL: isBlock ? false : null
                 });
-            })
-        }
-
-        function createChannel() {
-            return member.guild.channels.create('welcome', {
-                type: 'text',
-                permissionOverwrites: [
-                    {
-                        id: member.guild.id,
-                        deny: ['VIEW_CHANNEL', 'SEND_MESSAGES']
-                    },
-                    {
-                        id: member,
-                        allow: ['VIEW_CHANNEL'],
-                        deny: ['ADD_REACTIONS']
-                    }
-                ]
             });
+            member.guild.channels.cache.filter(channel => channel.id === config.welcome_channel_id).forEach(channel => {
+                channel.updateOverwrite(member, {
+                    VIEW_CHANNEL: isBlock ? true : false,
+                    SEND_MESSAGES: isBlock ? null : false
+                })
+            })
         }
     }
 }
