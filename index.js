@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const { token } = require('./config/token.json');
 const config = require('./config/data.json')
+const welcome = require('./utils/welcome');
 
 const client = new Discord.Client();
 
@@ -18,6 +19,11 @@ client.on('message', (message) => {
     if(client.commands.has(possible_prefix)) {
         client.commands.get(possible_prefix).execute(message);
     }
+});
+
+client.on('guildMemberAdd', async (member) => {
+    console.log('yea')
+    await welcome.execute(member);
 })
 
 function loadCommandFiles() {

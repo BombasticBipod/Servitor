@@ -3,10 +3,10 @@ const { color } = require('../config/data.json');
 module.exports = {
     name: 'getPreformedEmbed',
     description: 'preformats an embed for multiuse',
-    execute: (message) => {
+    execute: (client) => {
         const embed = new Discord.MessageEmbed();
         embed.setColor(color);
-        embed.setFooter("Servitor | Discord.js | BombasticBipod", message.client.user.avatarURL());
+        embed.setFooter("Servitor | Discord.js | BombasticBipod", client.user.avatarURL());
 
         return embed;
     }
