@@ -9,6 +9,6 @@ module.exports = {
         if(message_content_no_prefix.length > 1) {
             response_text = message_content_no_prefix.slice(1).join(' ');
         }
-        message.channel.send(getPreformedEmbed.execute(message).setTitle(response_text))
+        message.channel.send(getPreformedEmbed.execute(message).setTitle(response_text));
     }
 }
