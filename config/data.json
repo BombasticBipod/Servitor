@@ -2,6 +2,7 @@
   "prefix": "!",
   "welcome_channel_id": "849657439329452054",
   "welcome_channel_message_id": "849657461614051329",
-  "color": "#37fe43",
+  "color": "#ff79c6",
+  "original_color": "#37fe43",
   "owner_id": "700891521955659797"
 }
