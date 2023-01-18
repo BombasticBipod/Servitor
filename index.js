@@ -52,5 +52,5 @@ function loadCommandFiles() {
     })
 }
 
-client.login("NzAwODkxNTIxOTU1NjU5Nzk3.YLYwgg.s0MroFwx9dcdWnKUrozfwBLztAY").then(console.log)
+client.login("TOKEN").then(console.log)
 
